@@ -20,40 +20,39 @@ import {Card, CardImg, CardText, CardBody} from 'reactstrap';
                                 })}
                                 </ul>             
                         </CardBody>
-                    </Card>
-              
+                    </Card>             
             </div> 
           )
     }
 
     function RenderDish({dish}) {                                                                          
-            return ( 
-                    <div className="col-12 col-md-5 m-1">
-                        <Card>
-                            <CardImg top src={dish.image} alt={dish.name}/>
-                            <CardBody>
-                                <h2 className="card-title">{dish.name}</h2>
-                                <CardText>{dish.description}</CardText>
-                            </CardBody>
-                        </Card>
-                    </div>                   
-            )
+        return ( 
+                <div className="col-12 col-md-5 m-1">
+                    <Card>
+                        <CardImg width="100%" src={dish.image} alt={dish.name}/>
+                        <CardBody>
+                            <h2 className="card-title">{dish.name}</h2>
+                            <CardText>{dish.description}</CardText>
+                        </CardBody>
+                    </Card>
+                </div>                   
+        )
     }
 
     const DishDetail = (props) => {     
-            if (props.dish != null) { 
-                return(
-                    <div className="container">
-                        <div className="row">
-                            <RenderDish dish={props.dish} />
-                            <RenderComment comments={props.dish.comments} />
-                        </div>
-                    </div>  
-                )              
-            }
-            else {
-                return (<div></div>)
-            }           
+        if (props.dish != null) { 
+            return (
+                <div className="container">
+                    <div className="row">
+                        <RenderDish dish={props.dish} />
+                        <RenderComment comments={props.dish.comments} />
+                    </div>
+                </div>  
+            )              
+        }
+        else {
+            return (<div></div>)
+        }           
     }
 
 
