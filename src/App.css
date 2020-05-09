@@ -29,13 +29,23 @@ address{
 }
 
 .navbar-dark {
-    background-color: #512DA8;
+    background-color: darkslateblue;
 }
 
-.card-img {
-    position: relative;
+.body-media{
+    padding-left: 20pt;
+
 }
 
-.card-img-overlay {
-    position: relative;
+.nav-link{
+    padding-left: 5pt;
 }
+
+.ul-nav{
+    list-style-type:none;
+}
+
+li {float: left;
+    list-style-type:none;
+    }
+ 

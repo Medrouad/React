@@ -7,10 +7,10 @@ import { Link } from 'react-router-dom';
             return(
                     <Card>
                         <Link to={`/menu/${dish.id}`}>
-                        <img className="card-img" width="100%" src={dish.image} alt={dish.name} />
+                        <CardImg width="100%" src={dish.image} alt={dish.name} />
                             <CardImgOverlay>
                                 <CardTitle>{dish.name}</CardTitle>
-                            </CardImgOverlay>
+                            </CardImgOverlay> 
                         </Link>
                     </Card>
             );                    
@@ -39,7 +39,7 @@ import { Link } from 'react-router-dom';
                     </div>
                     <div className="row">
                         {menu}
-                    </div>
+                </div>
                 </div>
             );
         }
