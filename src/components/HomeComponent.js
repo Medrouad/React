@@ -6,7 +6,7 @@ import { Col, Card, CardTitle, CardText, CardSubtitle, CardImg, CardBody } from 
 function RenderCard({item}) {
     return(
         <Card>
-            <CardImg width="80%" src={item.image} alt={item.name} />
+            <CardImg width="100%" src={item.image} alt={item.name} />
             <CardBody>
             <CardTitle>{item.name}</CardTitle>
             {item.designation ? <CardSubtitle>{item.designation}</CardSubtitle> : null }

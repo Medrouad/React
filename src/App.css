@@ -37,18 +37,11 @@ address{
 
 }
 
-.nav-link{
-    padding-left: 5pt;
-}
-
-.ul-nav{
-    list-style-type:none;
-}
-
-li {float: left;
-    list-style-type:none;
-    }
-
 .invalid-feedback  {
     color: red;
 }
+
+.navbar-toggler {
+    background-color: gray;
+}
+
