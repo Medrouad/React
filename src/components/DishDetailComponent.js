@@ -1,43 +1,79 @@
-import React from "react"
-import {Card, CardImg, CardText, CardBody, Breadcrumb, BreadcrumbItem} from 'reactstrap';
+import React, { Component } from "react"
+import {Card, CardImg, CardText, CardBody, Breadcrumb, BreadcrumbItem, Button,Modal, ModalHeader, ModalBody, Label,Row, Col} from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { LocalForm, Control, Errors } from "react-redux-form";
+import { Loading } from './LoadingComponent';
+import { baseUrl } from '../shared/baseUrl';
+import { FadeTransform, Fade, Stagger } from 'react-animation-components';
 
 
-
-    function RenderComment({comments}) {
+    function RenderComment({comments, postComment, dishId}) {
           return (
+                <FadeTransform in transformProps={{
+                    exitTransform: 'scale(0.5) translateY(-50%)'
+                }}>  
                     <Card>
-                        <CardBody>
+                        <CardBody>                          
                             <h2 className="card-title">Comments</h2>
                                 <ul>
-                                    {comments.map(comment => {
-                                        return (
-                                            <li key={comment.id}>  
-                                                <p>{comment.comment}</p>
-                                                <p>--{comment.author}, {new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comment.date)))}</p>
-                                            </li> 
-                                    );
-                                })}
-                                </ul>             
+                                    <Stagger in>
+                                        {comments.map(comment => {
+                                            return (
+                                                <Fade in>
+                                                    <li key={comment.id}>  
+                                                        <p>{comment.comment}</p>
+                                                        <p>--{comment.author}, {new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comment.date)))}</p>
+                                                    </li>
+                                                </Fade> 
+                                        );
+                                        })}
+                                    </Stagger>
+                                </ul> 
+                                <CommentForm dishId={dishId} postComment={postComment} />                                      
                         </CardBody>
-                    </Card>             
+                    </Card>
+                </FadeTransform>             
           )
     }
 
     function RenderDish({dish}) {                                                                          
-        return (            
-                <Card>
-                    <CardImg width="100%" src={dish.image} alt={dish.name}/>
-                    <CardBody>
-                        <h2 className="card-title">{dish.name}</h2>
-                        <CardText>{dish.description}</CardText>
-                    </CardBody>
-                </Card>                 
+        return ( 
+                <FadeTransform
+                    in
+                    transformProps={{
+                        exitTransform: 'scale(0.5) translateY(-50%)'
+                    }}>          
+                    <Card>
+                        <CardImg width="100%" src={baseUrl + dish.image} alt={dish.name}/>
+                        <CardBody>
+                            <h2 className="card-title">{dish.name}</h2>
+                            <CardText>{dish.description}</CardText>
+                        </CardBody>
+                    </Card>  
+                </FadeTransform>               
         )
     }
 
-    const DishDetail = (props) => {     
-        if (props.dish != null) { 
+    const DishDetail = (props) => {
+        if (props.isLoading) {
+            return(
+                <div className="container">
+                    <div className="row">            
+                        <Loading />
+                    </div>
+                </div>
+            );
+        }
+        else if (props.errMess) {
+            return(
+                <div className="container">
+                    <div className="row">            
+                        <h4>{props.errMess}</h4>
+                    </div>
+                </div>
+            );
+        }  
+        else if (props.dish != null) { 
             return (
                 <div className="container">
                     <div className="row">
@@ -54,7 +90,9 @@ import { Link } from 'react-router-dom';
                                 <RenderDish dish={props.dish} />
                             </div>
                             <div className="col-12 col-md-5 m-1">
-                                <RenderComment comments={props.comments} />
+                                <RenderComment comments={props.comments}
+                                  postComment={props.postComment}
+                                  dishId={props.dish.id} />                              
                             </div>
                         </div>
                     </div>
@@ -66,6 +104,93 @@ import { Link } from 'react-router-dom';
         }           
     }
 
+     
+    class CommentForm extends Component {
+
+        constructor(props) {
+            super(props);
+            this.state = {
+                isModalOpen: false
+            }
+            this.toggleModal = this.toggleModal.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+    
+        toggleModal() {
+            this.setState({
+                isModalOpen: !this.state.isModalOpen
+            });
+        }
+    
+        handleSubmit(values) {
+            this.toggleModal();
+            this.props.postComment(this.props.dishId, values.rating, values.author, values.comment);
+        }
+    
+        render() {
+            const required = (val) => val && val.length;
+            const minLength = (len) => (val) => (val) && (val.length >= len);
+            const maxLength = (len) => (val) => !(val) || (val.length <= len);
+
+            return (
+                <div className="container">
+                    <Button outline onClick={this.toggleModal}>
+                        <span className="fa fa-pencil fa-lg"></span> Submit Comment
+                    </Button> 
+                    <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
+                        <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
+                        <ModalBody>
+                            <LocalForm onSubmit={(values) => this.handleSubmit(values)}>   
+                                <Row className="form-group">
+                                    <Label htmlFor="rating" md={12}>Rating</Label>
+                                    <Col>
+                                        <Control.select model=".rating" name="rating"
+                                                className="form-control">
+                                            <option>1</option>
+                                            <option>2</option>
+                                            <option>3</option>
+                                            <option>4</option>
+                                            <option>5</option>
+                                        </Control.select>
+                                    </Col>
+                                </Row>   
+                                <Row className="form-group">
+                                    <Label htmlFor="author" md={12}>Your Name</Label>
+                                    <Col>
+                                        <Control.text model=".author" id="author" name="author"
+                                                placeholder="Your Name"
+                                                className="form-control" 
+                                                validators={{
+                                                    required, minLength: minLength(3), maxLength: maxLength(15)
+                                                }} />
+                                        <Errors className="text-danger" show="touched" model=".author"
+                                                messages = {{
+                                                    required: 'Required',
+                                                    minLength: 'Must be 3 characters or more',
+                                                    maxLength: 'Must be 15 characters or less'
+                                                }} />
+                                    </Col>
+                                </Row>   
+                                <Row className="form-group">
+                                    <Label htmlFor="comment" md={12}>Comment</Label>
+                                    <Col>
+                                        <Control.textarea model=".comment" id="comment" name="comment"
+                                                rows="6"
+                                                className="form-control" />
+                                    </Col>
+                                </Row>   
+                                <Row className="form-group">
+                                    <Col>
+                                    <Button type="submit" color="primary">Submit</Button>
+                                    </Col>
+                                </Row>   
+                            </LocalForm>
+                        </ModalBody>
+                    </Modal>
+                </div>
+            );
+        }
+    }
 
 export default DishDetail;
  
